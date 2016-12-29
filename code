@@ -1,0 +1,820 @@
+import java.io.*;
+public class SC
+{
+    static int lowx=0,highx=0,lowy=0,highy=0,status=1,move=-1,num=0,squ=10,x=0,y=0,locstat=1,score=0,level=1;  
+    static String c[][] = new String[11][12];   
+    static String code="",pos="";
+    static int[] levscore={0,25,40,60,85,115,150,190,235,285,};
+    static char opt[] = {((char)(9829)),((char)(9830)),((char)(9827)),((char)(9824)),((char)(9786)),((char)(9787)),((char)(9671)),((char)(8578))};
+    public static void main(int hsstatus)throws IOException
+    {
+        locstat=1;
+        InputStreamReader read = new InputStreamReader(System.in);
+        BufferedReader in = new BufferedReader(read);        
+        while(locstat == 1)
+        {            
+            int ch=-1,a=0;
+            score=0;            
+            System.out.print("\f");
+            System.out.println("\t\t *************** Welcome to SymboCrush Saga ****************\n");
+            if(hsstatus==1)
+                System.out.print(" 1)\tNew Game\n 2)\tLoad Saved Game\n 3)\tHigh Scores\n 0)\tExit\n\n");
+            else if(hsstatus==0)
+                System.out.print(" 1)\tNew Game\n 0)\tExit\n\n");
+            if(hsstatus==1)
+            {
+                while((ch!=0 && ch!=1 && ch!=2 && ch!=3))
+                {
+                    while(a==0)
+                    {
+                        try
+                        {
+                            System.out.print("Enter your choice : ");
+                            ch = Integer.parseInt(in.readLine());
+                            a=1;
+                        }
+                        catch(Exception e)
+                        {
+                            System.out.println("Invalid Choice");
+                        }
+                    }
+                    if(ch!=0 && ch!= 1 && ch!=2 && ch!=3)
+                    {
+                        System.out.println(" Invalid Choice");   
+                        a=0;
+                    }                
+                }
+            }
+            else if(hsstatus==0)
+            {
+                while((ch!=0 && ch!=1 ))
+                {
+                    while(a==0)
+                    {
+                        try
+                        {
+                            System.out.print("Enter your choice : ");
+                            ch = Integer.parseInt(in.readLine());
+                            a=1;
+                        }
+                        catch(Exception e)
+                        {
+                            System.out.println("Invalid Choice");
+                        }
+                    }
+                    if(ch!=0 && ch!= 1)
+                    {
+                        System.out.println(" Invalid Choice");   
+                        a=0;
+                    }   
+                }
+            }
+            SC func10 = new SC();
+            if(ch==1)
+                func10.startGame(ch);
+            else if(ch==0)
+            {
+                locstat=0;
+                status=0;
+            }
+            else if (ch==2)
+            {                
+                loadGame func = new loadGame();
+                String load[]=func.main("SC");
+                score=Integer.parseInt(load[1]);
+                System.out.print("Successfully loaded the game .. Press Enter to start Playing .... ");
+                String tp=in.readLine();
+                SC loaded = new SC();
+                loaded.startGame(ch);
+            }
+            else if(ch==3)
+            {
+                func10.highSC(0,0);
+            }
+        }        
+    }
+
+    public void startGame(int ch) throws IOException
+    {
+        InputStreamReader read = new InputStreamReader(System.in);
+        BufferedReader in = new BufferedReader(read);        
+        System.out.print("\f\n\n");
+        SC func = new SC(); 
+        func.assign(); 
+        String tp="";
+        int lev=1;
+        code="D4";
+        pos="RIGHT";        
+        func.compro();
+        func.doBlank();
+        func.customAssign();
+        if(ch!=2)
+        score=0;
+        move=0;
+        if(locstat==1)
+        {
+            while(locstat==1)
+            {                
+                if(lev!=level)
+                {
+                    System.out.println("\t Congratulations !! You have successfully cleared this level ");
+                    System.out.println("\t\t Press "+(char)(9166)+" to go to the next level ");
+                    tp=in.readLine();
+                    lev++;
+                }
+                System.out.print("\f\t\t\t\t Level : "+level+"\t\t Score : "+score+"\n\n");
+                func.struct();  
+                int err=func.usert();
+                while(err==1)
+                    err = func.usert();
+                int inerr=func.compro();
+                if(inerr==1)
+                    System.out.println("Input Error : Invalid Input");            
+                func.scanBlank();            
+                func.struct();
+                for(int i=1;i<=1000000000;i++);            
+                func.customAssign();            
+                move++;
+                if(score >= levscore[level])
+                {
+                    level++;
+                }
+                System.out.print("\f\n\n");
+            }
+        }
+        if(locstat==0)
+        {
+            System.out.print("\f");
+            func.highSC(1,score);
+        }
+    }
+
+    public void assign()
+    {
+        for(int i=1;i<=10;i++)
+        {
+            for(int j=1;j<=10;j++)
+            {
+                int r = (int)(Math.random()*8);
+                c[i][j] = ""+opt[r];                
+            }            
+        }        
+    }
+
+    public int usert() throws IOException
+    {       
+        int err=0;
+        InputStreamReader read = new InputStreamReader(System.in);
+        BufferedReader in = new BufferedReader(read);
+        if(move==0)
+        {
+            System.out.println("\n");
+            System.out.println("Enter the block you want to move : For example B1");
+            System.out.print("Enter your move : ");
+            code = in.readLine();            
+        }
+        else
+        {
+            System.out.print("Enter your move : ");
+            code = in.readLine();            
+        }
+        if(code.length() == 1)
+        {            
+            if(code.equalsIgnoreCase("0"))
+            {
+                locstat=0;
+            }                      
+            else 
+            {
+                System.out.println("Invalid Input");
+                err=1;
+                code="";
+            }                
+        }       
+        if(locstat==1)
+        {
+            if(err!=1)
+            {
+                if(move==0)
+                {
+                    System.out.println("Enter the final position of the symbol : For example RIGHT or LEFT , UP or DOWN");
+                    System.out.print("Enter the final position : ");
+                    pos = in.readLine();            
+                }
+                else
+                {
+                    System.out.print("Enter the final position : ");
+                    pos = in.readLine();            
+                }
+                pos=pos.toUpperCase();
+                code=code.toUpperCase();
+                if(((pos.equalsIgnoreCase("RIGHT"))) || ((pos.equalsIgnoreCase("LEFT"))) || ((pos.equalsIgnoreCase("UP"))) || ((pos.equalsIgnoreCase("DOWN")))){}
+                else
+                {   
+                    if(pos.equalsIgnoreCase("0"))
+                    {
+                        err=0;
+                    }
+                    else
+                    {
+                        System.out.println("Invalid Input");
+                        err=1;
+                    }
+                }
+            }
+            if(err!=1)
+            {
+                int s=0;            
+                char o = code.charAt(0);
+                if(code.length()==2)
+                    s = (((int)(code.charAt(1))))-48;
+                else if(code.length()==3)
+                {
+                    s=10;
+                }
+                int found1=0,found2=0;
+                if(o>=65 &&o<=90)
+                    found1=1;
+                else if(o==48)
+                {                
+                    status=0;
+                    found1=1;
+                }
+                if(s>=1 && s<=10)
+                    found2=1;
+                else if(s==0)
+                {
+                    found2=1;
+                    status=0;                
+                }
+                if(found1==0 || found2==0)
+                {
+                    System.out.println("Invalid Input");
+                    err=1;
+                    code="";
+                }
+                if(s==0 || o==0)
+                {
+                    status=0;                
+                }
+            }   
+        }
+        return err;
+    }   
+
+    public int compro() throws IOException
+    {   
+        int inerr=0;
+        if(locstat==1)
+        {
+            InputStreamReader read = new InputStreamReader(System.in);
+            BufferedReader in = new BufferedReader(read);
+            int match=0;
+            int o = (int)(code.charAt(0)) - 64;
+            int s=0;
+            if(code.length()==2)
+                s = ((int)(code.charAt(1)))-48;
+            else if(code.length()==3)
+                s=10;
+            String temp="",tp="";
+            if(pos.equalsIgnoreCase("RIGHT"))
+            {
+                if(s==10)
+                    inerr=1;
+                else
+                {
+                    temp=c[o][s];
+                    c[o][s]=c[o][s+1];
+                    c[o][s+1]=temp;
+                }
+            }
+            if(pos.equalsIgnoreCase("LEFT"))
+            {
+                if(s==1)
+                    inerr=1;
+                else
+                {
+                    temp=c[o][s];
+                    c[o][s]=c[o][s-1];
+                    c[o][s-1]=temp;
+                }
+            }
+            if(pos.equalsIgnoreCase("UP"))
+            {
+                if(o==1)
+                    inerr=1;
+                else
+                {
+                    temp=c[o][s];
+                    c[o][s]=c[o-1][s];
+                    c[o-1][s]=temp;
+                }
+            }
+            if(pos.equalsIgnoreCase("DOWN"))
+            {
+                if(o==10)
+                    inerr=1;
+                else
+                {
+                    temp=c[o][s];
+                    c[o][s]=c[o+1][s];
+                    c[o+1][s]=temp;
+                }
+            }
+            SC f = new SC();            
+            f.struct();
+            if(move!=-1)
+            {
+                System.out.print("Press Enter to start crushing the Symbols !!  "+(char)(9166));
+                tp=in.readLine();
+            }
+            if(inerr==0)
+            {
+                for(int i=1;i<=10;i++)                                            
+                {            
+                    for(int j=1;j<=8;j++)
+                    {
+                        int ab=j;
+                        if( ((c[i][j]).equalsIgnoreCase((c[i][j+1]))) && ((c[i][j+1]).equalsIgnoreCase((c[i][j+2]))) )
+                        {
+                            ab=ab+2;
+                            int err=0;    
+                            lowx=j;
+                            highx=j+2;
+                            x=i;
+                            while(ab<10)
+                            {
+                                ab++;
+                                if((c[i][j+2]).equalsIgnoreCase((c[i][ab])))
+                                {
+                                    highx=highx+1;                               
+                                }
+                                else 
+                                    break;
+                            }
+                            if(move!=-1)
+                                score=(score+highx-lowx+1)*50;
+                            f.doBlank();                        
+                        }                    
+                    }            
+                }
+                for(int j=1;j<=10;j++)
+                {            
+                    for(int i=1;i<=8;i++)
+                    {
+                        int ab=i;                   
+                        if(((c[i][j]).equalsIgnoreCase((c[i+1][j]))) && ((c[i+1][j]).equalsIgnoreCase((c[i+2][j]))))
+                        {
+                            lowy=i;
+                            highy=i+2;
+                            ab=ab+2;
+                            int err=0;   
+                            y=j;
+                            while(ab<10)
+                            {
+                                ab++;
+                                if((c[i+2][j]).equalsIgnoreCase((c[ab][j])))
+                                {                                
+                                    highy=highy+1;                              
+                                }
+                                else
+                                    break;
+                            }
+                            if(move!=-1)
+                                score=(score+highy-lowy+1)*50;
+                            f.doBlank();                        
+                        }
+                    }            
+                }
+            }
+            System.out.print("\f");
+            f.struct();
+            if(move!=-1)
+            {  
+                System.out.print("Press Enter to continue :  "+(char)(9166));
+                temp=in.readLine();
+            }
+            if(lowx==0 && highx==0 && lowy==0 && highy==0)
+                match=0;
+            else
+                match=1;
+            if(match==0 || inerr==1)
+            {
+                temp="";
+                if(pos.equalsIgnoreCase("RIGHT"))
+                {
+                    if(s==10)
+                        inerr=1;
+                    else
+                    {
+                        temp=c[o][s];
+                        c[o][s]=c[o][s+1];
+                        c[o][s+1]=temp;
+                    }
+                }
+                if(pos.equalsIgnoreCase("LEFT"))
+                {
+                    if(s==1)
+                        inerr=1;
+                    else
+                    {
+                        temp=c[o][s];
+                        c[o][s]=c[o][s-1];
+                        c[o][s-1]=temp;
+                    }
+                }
+                if(pos.equalsIgnoreCase("UP"))
+                {
+                    if(o==1)
+                        inerr=1;
+                    else
+                    {
+                        temp=c[o][s];
+                        c[o][s]=c[o-1][s];
+                        c[o-1][s]=temp;
+                    }
+                }
+                if(pos.equalsIgnoreCase("DOWN"))
+                {
+                    if(o==10)
+                        inerr=1;
+                    else
+                    {
+                        temp=c[o][s];
+                        c[o][s]=c[o+1][s];
+                        c[o+1][s]=temp;
+                    }
+                }
+            }            
+        }
+        return inerr;
+    }
+
+    public void scanBlank() throws IOException
+    {
+        if(locstat==1)
+        {        
+            InputStreamReader read = new InputStreamReader(System.in);
+            BufferedReader in = new BufferedReader(read);
+            String temp="";
+            for(int j=1;j<=10;j++)
+            {
+                int blank=0;
+                for(int i=1;i<=10;i++)
+                {
+                    if(c[i][j].equalsIgnoreCase(""+(char)(9762)+""))
+                    {
+                        blank++;
+                    }
+                }            
+                for(int a=1;a<=blank;a++)
+                {
+                    for(int i=a;i<=10;i++)
+                    {
+                        if(c[i][j].equalsIgnoreCase(""+(char)(9762)+""))
+                        {
+                            for(int k=i;k>a;k--)
+                            {
+                                c[k][j]=c[k-1][j];
+                            }
+                            c[a][j]=""+(char)(9762)+"";
+                        }
+                    }
+                }
+            }
+            SC b = new SC();
+            System.out.print("\f\t\t\t\t Level : "+level+"\t\t Score : "+score+"\n\n");
+            b.struct();
+            System.out.println("\n");
+            System.out.print("Press Enter to continue :  "+(char)(9166));
+            temp = in.readLine();
+        }
+    }
+
+    public void doBlank() throws IOException
+    {
+        if(locstat==1)
+        {
+            InputStreamReader read = new InputStreamReader(System.in);
+            BufferedReader in = new BufferedReader(read);
+            String temp="";
+            SC a = new SC();
+            if(lowx!=0 || highx!=0)
+            {
+                for(int i=lowx;i<=highx;i++)
+                {
+                    c[x][i]=""+(char)(9762)+"";
+                }
+                System.out.print("\f\t\t\t\t Level : "+level+"\t\t Score : "+score+"\n\n");
+                a.struct();
+                System.out.println("\n");                
+            }
+            if(lowy!=0 || highy!=0)
+            {
+                for(int i=lowy;i<=highy;i++)
+                {
+                    c[i][y]=""+(char)(9762)+"";
+                }
+                System.out.print("\f\t\t\t\t Level : "+level+"\t\t Score : "+score+"\n\n");
+                a.struct();
+                System.out.println("\n");               
+            }            
+            lowx=0;
+            highx=0;
+            lowy=0;
+            highy=0;
+        }
+    }
+
+    public void struct()throws IOException
+    {        
+        InputStreamReader read = new InputStreamReader(System.in);
+        BufferedReader in = new BufferedReader(read);
+        if(locstat==1)
+        {
+            System.out.print("\f\t\t\t\t Level : "+level+"\t\t Score : "+score+"\n\n");
+            if(squ==10)
+                System.out.println("\t\t\t    "+" 1   "+" 2  "+" 3  "+" 4   "+" 5   "+" 6  "+" 7  "+" 8   "+" 9  "+" 10 ");
+            System.out.println();
+            for (int row = 1; row <= squ; row++) 
+            {
+                System.out.print("\t\t\t");
+                for (int col = 0; col <=squ; col++) 
+                {     
+                    if(col==0)
+                    {
+                        System.out.print((char)(row + 64)+"   ");                    
+                    }
+                    else
+                    {                    
+                        System.out.print(" "+c[row][col]+" ");
+                        if(col != (squ+1)) 
+                        {
+                            System.out.print("|");  
+                        }                
+                    }
+                }         
+                System.out.println();
+                System.out.print("\t\t\t");            
+                if (row != squ) 
+                {
+                    if(squ==10)
+                        System.out.println("   ------------------------------------------------");                 
+                }
+            }
+            System.out.println("\n");
+        }
+        else if(locstat==0)
+        {            
+            System.out.print("\f\t\t\t\t\t\t Final Score \n\t\t\t\t Level : "+level+"\t\t Score : "+score+"\n\n");
+            System.out.print("\nPress "+(char)(9166)+" to continue ");
+            String tp = in.readLine();
+        }
+    }
+
+    public void customAssign()
+    {
+        if(locstat==1)
+        {
+            for(int i=1;i<=10;i++)
+            {
+                for(int j=1;j<=10;j++)
+                {
+                    if(c[i][j].equalsIgnoreCase(""+(char)(9762)))
+                        c[i][j]=""+((opt[(int)((Math.random()*8))]));
+                }
+            }
+        }
+    }
+
+    public void highSC(int rw,int score)throws IOException
+    {
+        InputStreamReader readi = new InputStreamReader(System.in);
+        BufferedReader in = new BufferedReader(readi);
+        highSC hsc = new highSC();
+        String read[][] = new String[4][3]; 
+
+        if(rw==0)
+        {
+            System.out.print("\f");
+            System.out.println("\t\t"+(char)(9733)+" "+(char)(9786)+" Leader Board : SymboCrush "+(char)(9787)+" "+(char)(9734));
+            read = hsc.main(0,0);
+            System.out.println("\n");
+            System.out.println("\t\t"+(char)(8858)+" Name"+"\t\t\t"+(char)(8858)+" Score");
+            System.out.println("\t\t"+"  "+read[1][1]+"\t\t"+"  "+read[1][2]+" "+(char)(9734));
+            System.out.println("\t\t"+"  "+read[2][1]+"\t\t"+"  "+read[2][2]+" ");
+            System.out.println("\t\t"+"  "+read[3][1]+"\t\t"+"  "+read[3][2]+" ");
+            System.out.print("\n\n\tPress Enter key to continue ....");
+            String tp = in.readLine();
+        } 
+        if(rw==1)
+        {
+            hsc.main(1,score);
+        }
+        System.out.print("\n Do you want to Save the game .. so that you can continue later ?? Yes : 1 || No : 0 \n Saving again will over write the previously saved game !!");
+        int ch=-1;
+        int a=0;
+        while((ch!=0 && ch!=1))
+        {
+            while(a==0)
+            {
+                try
+                {
+                    System.out.print("Enter your choice : ");
+                    ch = Integer.parseInt(in.readLine());
+                    a=1;
+                }
+                catch(Exception e)
+                {
+                    System.out.println("Invalid Choice");
+                }
+            }
+            if(ch!=0 && ch!= 1 )
+            {
+                System.out.println(" Invalid Choice");   
+                a=0;
+            }                
+        }
+        if(ch==1)
+        {
+            System.out.print("\n Enter your name : ");
+            String name = in.readLine();
+            saveGame func = new saveGame();
+            func.main("SC",score,name);          
+            System.out.print("Successfully Saved Game !! Press Enter to continue .... ");
+            name=in.readLine();
+        }
+    }
+}
+//HIGH SCORES FOR SYMBOCRUSH
+
+import java.io.*;
+import java.util.*;
+public class highSC
+{
+    public static String[][] main(int rw,int score) throws IOException
+    {
+        String read[][] = new String[4][3];
+        FileInputStream fis = new FileInputStream("C:\\Users\\Public\\Documents\\Games\\SymboCrush\\fs.dat");
+        Scanner scanner = new Scanner(fis);
+        //reading file line by line using Scanner in Java        
+        int i=1;
+        while(scanner.hasNextLine())
+        {
+            String temp = scanner.nextLine();
+            temp=temp.trim();
+            int indexSpace = temp.indexOf(' ');
+            String nameRead = temp.substring(0,indexSpace);
+            String scoreRead = temp.substring(indexSpace+1);
+            if(rw==0)
+            {
+                int spaces=12-nameRead.length();            
+                for(int z=1;z<=spaces;z++)
+                    nameRead=nameRead+" ";
+            }
+            read[i][1]=nameRead;
+            read[i][2]=scoreRead;
+            i++;
+        }
+        scanner.close();      
+        if(rw==1)
+        {
+            highSC func = new highSC();
+            func.write(read,score);
+        }
+        return read;
+    }    
+
+    private void write(String read[][],int score)throws IOException
+    {
+        InputStreamReader readi = new InputStreamReader(System.in);
+        BufferedReader in = new BufferedReader(readi);
+        int flag=0;
+        int i=1,j=3;
+        for(int k=i;k<=j;k++)
+        {
+            if(read[k][2]!=null)
+            {
+                int readS=Integer.parseInt(read[k][2]);
+                if(score > readS)
+                {
+                    flag=k;
+                    break;
+                }
+            }
+        }
+        if(flag!=0)
+        {
+            System.out.println("\n\t You just made a HIGH SCORE !!");
+            System.out.print("\t Enter your name : ");
+            String name = in.readLine();
+            File file;
+            String fileName="C:\\Users\\Public\\Documents\\Games\\SymboCrush\\fs.dat";
+            file = new File(fileName);
+            FileWriter writer = new FileWriter(file);
+            writer.write("");
+            if(flag==1)
+            {
+                read[i+2][2]=read[i+1][2];
+                read[i+2][1]=read[i+1][1];
+
+                read[i+1][2]=read[i][2];
+                read[i+1][1]=read[i][1];
+
+                read[flag][2]=""+score;
+                read[flag][1]=name;
+            }
+            else if(flag==2)
+            {
+                read[i+2][2]=read[i+1][2];
+                read[i+2][1]=read[i+1][1];
+
+                read[flag][2]=""+score;
+                read[flag][1]=name;
+            }
+            else if(flag==3)
+            {
+                read[flag][2]=""+score;
+                read[flag][1]=name;   
+            }           
+            writer.write(read[i][1]+" "+read[i][2]+System.getProperty("line.separator")+read[i+1][1]+" "+read[i+1][2]+System.getProperty("line.separator")+read[i+2][1]+" "+read[i+2][2]);
+            writer.flush();
+            writer.close();
+        }
+    }
+}
+
+//SAVE GAME IN SYMBOCRUSH - 1
+
+import java.io.*;
+public class saveGame
+{
+    public static void main(String game,int score,String name)throws IOException
+    {
+        if(game.equalsIgnoreCase("SC"))
+        {
+            saveGameSC func = new saveGameSC();
+            func.main(score,name);
+        }
+    }
+}
+
+//SAVE GAME IN SYMBOCRUSH - 2
+
+import java.io.*;
+public class saveGameSC
+{
+    public static void main(int score,String name)throws IOException
+    {
+        File file;
+        String fileName="C:\\Users\\Public\\Documents\\Games\\SymboCrush\\SavedGames\\fss.dat";
+        file = new File(fileName);
+        FileWriter writer = new FileWriter(file);
+        writer.write("");
+        writer.write(name+" "+score);
+    }
+}
+LOAD GAME IN SYMBOCRUSH – 1
+
+import java.io.*;
+public class loadGame
+{
+    public static String[] main(String game)throws IOException
+    {
+        String read[] = new String[2];
+        if(game.equalsIgnoreCase("SC"))
+        {
+            loadGameSC lgsc = new loadGameSC();
+            read=lgsc.main();            
+        }
+        return read;
+    }
+}
+//LOAD GAME IN SYMBOCRUSH – 2
+
+import java.io.*;
+import java.util.*;
+public class loadGameSC
+{
+    public static String[] main()throws IOException
+    {
+        String read[] = new String[2];
+        FileInputStream fis = new FileInputStream("C:\\Users\\Public\\Documents\\Games\\SymboCrush\\SavedGames\\fss.dat");
+        Scanner scanner = new Scanner(fis);        
+        String temp="";
+        while(scanner.hasNextLine())
+        {
+            temp = temp+scanner.nextLine();
+        }
+        scanner.close();
+        temp=temp.trim();
+        int indexSpace = temp.indexOf(' ');
+        String nameRead = temp.substring(0,indexSpace);
+        String scoreRead = temp.substring(indexSpace+1);
+
+        read[0]=nameRead;
+        read[1]=scoreRead;
+
+        return read;
+    }
+}
